@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+.env
+
+# 复刻代码目录(独立管理,不同步)
+code/learn-claude-code/
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# 日志/临时
+*.log
+*.tmp
+.cache/
+
+# Anki 生成物
+anki/*.apkg
+
+# 敏感文件
+*.key
+*.pem
+.env.local
+secrets/
