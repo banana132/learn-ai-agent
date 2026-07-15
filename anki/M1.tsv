@@ -1,0 +1,4 @@
+Question	Answer	Tags	Created
+"ReAct 三元组 Thought/Action/Observation 分别是什么? (工程视角)"	"• Thought = LLM 主动推理输出 (决定下一步)\n• Action = LLM 输出的结构化工具调用\n• Observation = 工具执行的原始返回, 原样塞回 context\n\n关键: Observation 是【被动接受】, 不加工\n\n对比: 微服务里 orchestrator 收到 service 返回值, 直接进下一步; 不会先找'解读员'翻译"	M1 ReAct core	2026-07-15
+"为什么 ReAct 循环中 Observation 不能让 LLM 先 interpret 再塞 context?"	"3 个致命理由:\n\n1. 信息损失: JSON 里的字段被总结掉\n2. 幻觉入口: 每轮多 1 次 LLM 调用 = 多 1 次瞎编机会\n3. 成本翻倍: 4 轮从 4 次调用变 8 次\n\n更深原因: 破坏 Faithfulness (忠实性)\n→ 后续推理建在失真数据上\n→ 错误指数级放大 (agent 幻觉复合)\n\n类比: 数据库返回 uin='00123', LLM 总结成 123 → 下一步查询语义完全变了"	M1 ReAct pitfall faithfulness	2026-07-15
+"ReAct 论文的一句话本质? 相比纯 CoT 强在哪?"	"本质: ReAct = 让 LLM 从'一口气回答'变成'边想边查边答'的循环协议\n\n相比 CoT 强在:\n• CoT 的推理原料 = 训练时刻的旧知识 (会瞎编)\n• ReAct 的推理原料 = 每轮 tool 返回的实时数据\n\n心智模型: 复利\n轮次 1→2→3→4, context 信息量 10%→30%→70%→95%\n\n关键辨别: 没有外部工具就不是 ReAct, 只是 CoT"	M1 ReAct definition CoT	2026-07-15

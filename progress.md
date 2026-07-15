@@ -28,16 +28,30 @@
 
 **完成**:
 - ✅ **7/13** clone `shareAI-lab/learn-claude-code`,通读全部章节
+- ✅ **7/14** Battle Map v1 出炉,GitHub repo `banana132/learn-ai-agent` 建立
+- ✅ **7/15** **首次真正走完费曼流程** (M1-W1-1)
+  - Research 4 问逐条走完, 目标锁定 A+C+D + 讲课驱动 (①→②→③)
+  - Battle Map v2 生成 (讲课驱动版, 严格执行 Feynman)
+  - M1-W1-1 首讲 ReAct 循环, 双听众费曼 PASS (超预期)
+  - ⭐ 独创贡献: 广告归因类比 + Type Drift 直觉迁移
+  - 暴露 2 个漏洞已修复: O/T 混淆 + Observation 加工方向反了
+  - 落盘: notes/M1-W1-01-ReAct.md, common-mistakes.md, anki/week1.md (v2 卡 ×4)
 
-**下一步**:
-- [ ] 读 Anthropic [Building Effective Agents](https://www.anthropic.com/research/building-effective-agents)(30 分钟)
-- [ ] 建 GitHub repo `my-agent-journey`(5 分钟,写第一篇日志:通读 learn-claude-code 的 3 个关键收获)
-- [ ] **动手**:纯 Python + Anthropic/OpenAI SDK 手写 200 行 ReAct 循环,实现 3 个工具(web_search / read_file / execute_code)
+**下一步 (M1-W1-2, 建议 7/16-7/17)**:
+- [ ] 讲清 **Tool Calling / Function Calling** 底层协议 (OpenAI vs Anthropic 差异)
+  - 教练理由: 焊死今天的 O/T 混淆漏洞
+- [ ] 精读 Anthropic [Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) 30 分钟
+- [ ] 备选: 讲清 CoT vs ReAct 精确差异 (概念清扫)
 
-**思考/疑问**(待记录):
+**思考/疑问**(留给后续):
 - learn-claude-code 里哪一章最颠覆认知?
 - 它的 sub-agent / skills 机制,和你已经在用的 Hermes 有啥异同?
-- 你觉得先动手写 200 行 ReAct,还是先啃 Building Effective Agents?
+- Tool Calling 的 JSON Schema 强制约束是怎么在训练层保证的?
+
+**本周指标**:
+- 时间: 用 ≈1h / 计划 10h
+- 完成模块: 1 / 目标 3 (M1-W1-1/2/3)
+- Anki 卡累计: 7 张 (v1 三张 + v2 四张)
 
 ---
 
