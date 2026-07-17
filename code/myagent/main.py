@@ -51,11 +51,19 @@ registry.register("buggy_tool", buggy_tool, {
     }
 })
 
-client = OpenAI(
-    base_url=os.getenv('GLM_BASE_URL'),
-    api_key=os.getenv('GLM_API_KEY')
-)
-agent = AgentLoop(client, registry, os.getenv('GLM_MODEL'))
-# result = agent.run("深圳现在几点了？天气怎么样？")
-result = agent.run("调一下 buggy_tool，如果坏了就告诉我")
+def newOpenAI():
+    return OpenAI(
+    api_key=os.getenv('OPENAI_API_KEY')
+    )
+
+def newGLM():
+    return OpenAI(
+        base_url=os.getenv('GLM_BASE_URL'),
+        api_key=os.getenv('GLM_API_KEY')
+    )
+
+client = newGLM()
+agent = AgentLoop(client, registry, os.getenv('AI_MODEL'))
+result = agent.run("深圳现在几点了？天气怎么样？")
+# result = agent.run("调一下 buggy_tool，如果坏了就告诉我")
 print('final result:', result)
