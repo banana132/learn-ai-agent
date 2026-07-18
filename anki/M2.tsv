@@ -1,0 +1,23 @@
+Q: Agent Loop 的本质是什么？用一句话说清
+A: 一个 while 循环 + 一段 messages 数组：chat → 回填 assistant → 判断 tool_calls → 有就 dispatch → 回填 tool → 循环；没有就 return content
+
+Q: Tool Registry 为什么独立于 AgentLoop？
+A: 开闭原则——加工具不改引擎。Registry 是"插件层"，Loop 是"引擎层"。
+
+Q: dispatch 用 `**(args or {})` 而不是 `fn(args)` 的原因？
+A: 统一处理有参数/无参数两种工具调用。`**{}` 等同于不传任何参数。
+
+Q: 工具调用失败时的处理策略？
+A: try/except 捕获异常 → 把错误信息序列化为 tool_result → 塞回 context 让 LLM 看到错误 → LLM 自己决定重试/换方案/告知用户
+
+Q: 为什么工具错误要"喂回 LLM"而不是静默跳过或崩溃？
+A: Agent 不怕犯错，怕沉默地崩。LLM 看到错误后可以自我纠正——这是 ReAct 循环的恢复能力。静默跳过会误导 LLM，直接崩溃会丢失全量 context。
+
+Q: Streaming 模式下 tool_calls 拼接的正确方式？
+A: 按 index 维护 tool_call_buf 字典，每个 chunk 的 arguments 做 += 拼接。错误方式：直接 tool_calls.extend(chunk.tool_calls) → 碎片。
+
+Q: Context 超限时的裁剪策略？
+A: 保留 system prompt + 首问(head[:2]) + 最近 N 条消息(tail)，中间历史丢弃。本质是"任务锚点不丢 + 近期上下文保留"。
+
+Q: LLM 调用加重试的指数退避怎么实现？
+A: for attempt in range(max_retries): try → chat → return; except → sleep(2**attempt) → 继续循环。退避序列：1s, 2s, 4s, 8s...

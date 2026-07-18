@@ -33,6 +33,8 @@ class AgentLoop:
         return str(tool_result)
 
     def run(self, user_message: str) -> str:
+        _, content = self._run_inner(user_message)
+        return content
         # while 循环 + messages 数组
         # 每次迭代: chat → 回填 assistant → 判断 tool_calls → 分发工具 → 回填 tool
         context = [
@@ -84,6 +86,55 @@ class AgentLoop:
             else:
                 print("没有tool calls结束：", content)
                 return content
+    
+    def run_with_trajectory(self, user_message: str) -> tuple:
+        return self._run_inner(user_message, True)
+
+    def _run_inner(self, user_message: str, with_trajectory: bool = False):
+        context = [
+            {"role": "user", "content": user_message}
+        ]
+        times = 1
+        trajectory = []
+        while True:
+            try:
+                content, tool_calls = self._chat_stream(context)
+            except Exception as e:
+                return trajectory, str(e)
+            context.append(
+                {"role": "assistant", "content": content, "tool_calls": tool_calls}
+            )
+            if tool_calls:
+                for tool_call in tool_calls:
+                    print("tool call:", tool_call)
+                    tool_name = tool_call['function']['name']
+                    tool_args = tool_call['function']['arguments']
+                    try:
+                        tool_result = self.registry.dispatch(tool_name, json.loads(tool_args))
+                    except Exception as e:
+                        print(f"Tool {tool_name} failed: {e}")
+                        tool_result = {"error": str(e)}
+                    print("call rslt：", tool_result, type(tool_result))
+                    context.append(
+                        {"role": "tool", "tool_call_id": tool_call['id'], "content": self._serialize_tool_result(tool_result)}
+                    )
+                    context = self._trim_context(context)
+                    if with_trajectory:
+                        trajectory.append([
+                            {"step": len(trajectory)+1, "type": "tool_call", "tool": tool_name, "args": json.loads(tool_args)},
+                            {"step": len(trajectory)+2, "type": "tool_result", "tool": tool_name, "result": tool_result, "is_error": isinstance(tool_result, dict) and "error" in tool_result },
+                        ])
+                times += 1
+                if times > self.max_iterations:
+                    print("超过最大迭代次数结束：", content)
+                    if with_trajectory:
+                        trajectory.append({"step": len(trajectory)+1, "type": "final_output", "content": content})
+                    return trajectory, content
+            else:
+                print("没有tool calls结束：", content)
+                if with_trajectory:
+                    trajectory.append({"step": len(trajectory)+1, "type": "final_output", "content": content})
+                return trajectory, content
         
     def _chat_with_retry(self, context, max_retries=3):
         for attempt in range(max_retries):
