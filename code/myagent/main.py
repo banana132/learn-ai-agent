@@ -64,6 +64,7 @@ def newGLM():
 
 client = newGLM()
 agent = AgentLoop(client, registry, os.getenv('AI_MODEL'))
-result = agent.run("深圳现在几点了？天气怎么样？")
+# result = agent.run("深圳现在几点了？天气怎么样？")
+trajectory, result = agent.run_with_trajectory("深圳现在几点了？天气怎么样？")
 # result = agent.run("调一下 buggy_tool，如果坏了就告诉我")
-print('final result:', result)
+print('final result:', result, ", trajectory:", trajectory)
