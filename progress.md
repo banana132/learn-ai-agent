@@ -56,15 +56,62 @@
     - 三层兜底: Prompt → API strict → 代码 try/except
     - Anki 卡累计: 16 张
   
-  **下一步 (M1-W4, 建议 7/17)**:
-  - [ ] M1-W3: Structured Output — JSON Mode, 为什么 Agent 需要结构化输出
-  - [ ] M1-W4: 综合费曼出关 — 对 (a) 讲清 Agent 全貌, 博客/视频准备
+  **下一步 (M2, 建议 7/17)**:
+  - [ ] M2: 200 行手写 Agent — loop + registry + token 裁剪 + streaming + 重试
 
   **本周指标**:
   - 时间: 用 ≈3h / 计划 10h
   - 完成模块: 4 (M1-W1-1/2/3 + M1-W2)
   - Anki 卡累计: 14 张
-- M1-W1 全部完成 🎉
+- M1 全部完成 🎉
+
+---
+
+## Week 5 - M2 手写 Agent (2026-07-17 ~ 07-18)
+
+**状态**: ✅ 完成 + 出关
+
+**完成**:
+- ✅ **7/17** M2-W1: Agent Loop 核心 — while 循环 + tool_calls 分发 + 回填 context
+- ✅ **7/17** M2-W2: Tool Registry — 独立模块 + dispatch 参数处理 + 错误捕获
+- ✅ **7/17** M2-W3: Token 裁剪 — tiktoken 计数 + head+tail 保留策略
+- ✅ **7/17** M2-W4: Streaming — chunk 拼接 + tool_call 增量合并
+- ✅ **7/17** M2-W5: 重试 + 指数退避 — `_chat_with_retry` + `_chat_stream`
+- ✅ **7/17** M2 快速出关: 费曼三问 PASS (Loop 时序图 / dispatch 参数 / 工具错误处理)
+- ✅ **7/18** M2 Anki 卡: 8 张 (Loop/Registry/token/streaming/重试)
+- 代码: `loop.py`(198行), `registry.py`(19行), `main.py`(71行)
+
+**踩坑**:
+- streaming 下 tool_call 增量拼接不合并导致多工具调用只取最后一个
+- 异常路径返回值类型不一致 → `_run_inner` 统一返回 tuple
+
+---
+
+## Week 5b - M3 Eval 体系 (2026-07-18)
+
+**状态**: ✅ 完成 + 出关
+
+**完成**:
+- ✅ **M3-W1** LLM-as-Judge: `judge.py`(150行), temperature=0, JSON 输出, 二阶 sanity check
+- ✅ **M3-W2** Task-level Eval: `eval_suite.py`(265行), 5 用例按⭐分级, 预期分数区间
+- ✅ **M3-W3** Trajectory Eval: `run_with_trajectory()`, `check_trajectory()` 白名单/黑名单双模式, 缺工具/禁调/tool_error/步数冗余四维检查
+- ✅ **M3-W4** Tracing: Langfuse Trace → Span 树概念, 自动埋点 vs 手动 trajectory
+- ✅ **M3-W5** Benchmark 生态: SWE-bench/GAIA/WebArena 地图, Leaderboard 三大坑
+- ✅ **M3 出关检查**: 费曼三题, 通过(待强化: Trajectory/Task-level 正交, Benchmark 三个坑)
+
+**核心代码**:
+- `judge.py` — LLM 评分 + 二阶元评审
+- `eval_suite.py` — 5 用例 + check_trajectory + Score Card
+- `loop.py` — +`run_with_trajectory()`
+
+**踩坑**:
+- `list.append(a, b)` → `list.extend([a, b])`
+- `tc` 变量作用域泄漏到 `check_trajectory` 内部
+- `tool_errors` 收集布尔值而非工具名
+- `forbidden_tools: {}` 是 dict 不是 set → `set()`
+
+  **下一步 (M4)**:
+  - [ ] M4: 生产 Agent 架构 — 运维告警诊断 agent 设计
 
 ---
 
